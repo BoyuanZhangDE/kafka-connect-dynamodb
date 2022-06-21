@@ -90,7 +90,9 @@ public class DynamoDBSourceConnector extends SourceConnector {
             public void run() {
                 try {
                     if (consumableTables != null) {
-                        LOGGER.info("Looking for changed DynamoDB tables");
+//                        LOGGER.info("consumableTables are {}", consumableTables);
+//                        LOGGER.info("Looking for changed DynamoDB tables");
+                        LOGGER.info("Looking for heaven");
                         List<String> consumableTablesRefreshed = tablesProvider.getConsumableTables();
                         if (!consumableTables.equals(consumableTablesRefreshed)) {
                             LOGGER.info("Detected changes in DynamoDB tables. Requesting tasks reconfiguration.");
