@@ -60,11 +60,14 @@ public class AwsClients {
 
     public static AWSCredentialsProvider getCredentials(String awsAccessKeyID, String awsSecretKey) {
         if (awsAccessKeyID == null || awsSecretKey == null) {
-            LOGGER.debug("Using DefaultAWSCredentialsProviderChain");
+            // LOGGER.debug("Using DefaultAWSCredentialsProviderChain");
+            LOGGER.info("BZ_DEBUG: Using DefaultAWSCredentialsProviderChain");
+            LOGGER.info("BZ_DEBUG: returned creds is: {}", DefaultAWSCredentialsProviderChain.getInstance());
 
             return DefaultAWSCredentialsProviderChain.getInstance();
         } else {
-            LOGGER.debug("Using AWS credentials from connector configuration");
+            // LOGGER.debug("Using AWS credentials from connector configuration");
+            LOGGER.debug("BZ_DEBUG: Using AWS credentials from connector configuration");
 
             final BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsAccessKeyID, awsSecretKey);
             return new AWSStaticCredentialsProvider(awsCreds);
