@@ -47,14 +47,18 @@ public class DynamoDBTablesProvider extends TablesProviderBase implements Tables
 
         final List<String> consumableTables = new LinkedList<>();
         GetResourcesRequest resourcesRequest = getGetResourcesRequest();
+
+        LOGGER.info("BZ_DEBUG: resourcesRequest is: {}", resourcesRequest);
+        
         while (true) {
             GetResourcesResult result = groupsTaggingAPI.getResources(resourcesRequest);
+            LOGGER.info("BZ_DEBUG: result is: {}", result);
 
             for (ResourceTagMapping resource : result.getResourceTagMappingList()) {
                 String tableARN = resource.getResourceARN();
                 String tableName = tableARN.substring(tableARN.lastIndexOf("/") + 1);
 
-                LOGGER.info("BZ_DEBUG: result is: {}", result);
+                
                 LOGGER.info("BZ_DEBUG: resource is: {}", resource);
                 LOGGER.info("BZ_DEBUG: table arn is :{}", tableARN);
                 LOGGER.info("BZ_DEBUG: table name is :{}", tableName);
