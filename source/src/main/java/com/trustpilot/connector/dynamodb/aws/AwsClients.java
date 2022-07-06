@@ -62,12 +62,9 @@ public class AwsClients {
         if (awsAccessKeyID == null || awsSecretKey == null) {
             // LOGGER.debug("Using DefaultAWSCredentialsProviderChain");
             LOGGER.info("BZ_DEBUG: Using DefaultAWSCredentialsProviderChain");
-            LOGGER.info("BZ_DEBUG: returned creds is: {}", DefaultAWSCredentialsProviderChain.getInstance());
-
             return DefaultAWSCredentialsProviderChain.getInstance();
         } else {
-            // LOGGER.debug("Using AWS credentials from connector configuration");
-            LOGGER.debug("BZ_DEBUG: Using AWS credentials from connector configuration");
+            LOGGER.debug("Using AWS credentials from connector configuration");
 
             final BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsAccessKeyID, awsSecretKey);
             return new AWSStaticCredentialsProvider(awsCreds);
@@ -79,7 +76,7 @@ public class AwsClients {
                                                      String serviceEndpoint,
                                                      String awsAccessKeyID,
                                                      String awsSecretKey) {
-
+        LOGGER.info("BZ_DEBUG: returned creds is: {}",getCredentials(awsAccessKeyID, awsSecretKey));
         builder.withCredentials(getCredentials(awsAccessKeyID, awsSecretKey))
                 .withClientConfiguration(new ClientConfiguration().withThrottledRetries(true));
 
