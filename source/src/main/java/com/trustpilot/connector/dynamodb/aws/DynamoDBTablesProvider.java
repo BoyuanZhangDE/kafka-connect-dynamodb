@@ -54,6 +54,12 @@ public class DynamoDBTablesProvider extends TablesProviderBase implements Tables
                 String tableARN = resource.getResourceARN();
                 String tableName = tableARN.substring(tableARN.lastIndexOf("/") + 1);
 
+                LOGGER.info("BZ_DEBUG: result is: {}", result);
+                LOGGER.info("BZ_DEBUG: resource is: {}", resource);
+                LOGGER.info("BZ_DEBUG: table arn is :{}", tableARN);
+                LOGGER.info("BZ_DEBUG: table name is :{}", tableName);
+
+
                 try {
                     final TableDescription tableDesc = client.describeTable(tableName).getTable();
 
