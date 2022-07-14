@@ -1,9 +1,7 @@
 package com.trustpilot.connector.dynamodb.utils.metrics;
 import com.codahale.metrics.*;
 import com.codahale.metrics.jmx.JmxReporter;
-import org.omg.CORBA.Any;
 
-import java.time.Instant;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
