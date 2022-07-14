@@ -1,8 +1,6 @@
 package com.trustpilot.connector.dynamodb.utils.metrics;
 import com.codahale.metrics.*;
 import com.codahale.metrics.jmx.JmxReporter;
-
-
 import static com.codahale.metrics.MetricRegistry.name;
 
 public class MetricUtils {
