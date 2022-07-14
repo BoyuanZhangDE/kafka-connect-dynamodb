@@ -117,6 +117,22 @@ public class DynamoDBSourceTask extends SourceTask {
         DynamoDBSourceTaskConfig config = new DynamoDBSourceTaskConfig(configProperties);
         LOGGER.info("Starting task for table: {}", config.getTableName());
 
+        // JMX test
+        LOGGER.info("DEBUG_BZ: exporting test metrics");
+        MetricRegistry metrics = new MetricRegistry();
+        metrics.register(name(this.getClass(), "test_metrics_from_ddb"), new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                return 1;
+            }
+        });
+
+        final JmxReporter reporter = JmxReporter.forRegistry(metrics).build();
+        reporter.start();
+
+        // test end
+
+
         LOGGER.debug("Getting DynamoDB description for table: {}", config.getTableName());
         if (client == null) {
             client = AwsClients.buildDynamoDbClient(
