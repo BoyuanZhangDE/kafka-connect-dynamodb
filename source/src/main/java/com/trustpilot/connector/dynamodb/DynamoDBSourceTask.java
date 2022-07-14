@@ -18,11 +18,8 @@ import com.trustpilot.connector.dynamodb.kcl.KclWorkerImpl;
 import com.trustpilot.connector.dynamodb.kcl.ShardInfo;
 import com.trustpilot.connector.dynamodb.utils.RecordConverter;
 import com.trustpilot.connector.dynamodb.utils.metrics.MetricUtils;
-import jdk.jfr.EventFactory;
-import jdk.jfr.internal.MetadataRepository;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
-import org.omg.CORBA.Any;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.codahale.metrics.MetricRegistry.name;
-import static com.sun.corba.se.impl.util.RepositoryId.cache;
-
 /**
  * This source tasks tracks all DynamoDB table changes via DynamoDB Streams.
  * (Table must have Streams enabled with `new_image` mode)
