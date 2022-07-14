@@ -46,6 +46,7 @@ allprojects {
 
     dependencies {
         def junitJupiterVersion = '5.6.2'
+        def metricsVersion = '4.2.0'
         testImplementation "org.junit.jupiter:junit-jupiter:$junitJupiterVersion"
         testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
         testCompile "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
@@ -62,6 +63,8 @@ allprojects {
         compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
         compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.17.1'
+        compile "io.dropwizard.metrics:metrics-core:$metricsVersion"
+        compile "io.dropwizard.metrics:metrics-jmx:$metricsVersion"
     }
 
     test {

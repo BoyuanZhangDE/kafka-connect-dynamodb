@@ -7,6 +7,8 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.streamsadapter.model.RecordAdapter;
 import com.amazonaws.services.kinesis.model.Record;
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.MetricRegistry;
 import com.trustpilot.connector.dynamodb.aws.AwsClients;
 import com.trustpilot.connector.dynamodb.aws.DynamoDBTableScanner;
 import com.trustpilot.connector.dynamodb.aws.TableScanner;
@@ -15,8 +17,12 @@ import com.trustpilot.connector.dynamodb.kcl.KclWorker;
 import com.trustpilot.connector.dynamodb.kcl.KclWorkerImpl;
 import com.trustpilot.connector.dynamodb.kcl.ShardInfo;
 import com.trustpilot.connector.dynamodb.utils.RecordConverter;
+import com.trustpilot.connector.dynamodb.utils.metrics.MetricUtils;
+import jdk.jfr.EventFactory;
+import jdk.jfr.internal.MetadataRepository;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
+import org.omg.CORBA.Any;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +34,9 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
+import static com.codahale.metrics.MetricRegistry.name;
+import static com.sun.corba.se.impl.util.RepositoryId.cache;
 
 /**
  * This source tasks tracks all DynamoDB table changes via DynamoDB Streams.
@@ -289,6 +298,16 @@ public class DynamoDBSourceTask extends SourceTask {
         for (Record record : dynamoDBRecords.getRecords()) {
             try {
                 Date arrivalTimestamp = record.getApproximateArrivalTimestamp();
+
+                // JMX test
+                LOGGER.info("DEBUG_BZ: exporting metrics arrivalTimeStamp: ", arrivalTimestamp.toInstant().toString());
+                MetricRegistry metrics = new MetricRegistry();
+                metrics.register(name(this.getClass(), "arrival_time_str"), new Gauge<String>() {
+                    @Override
+                    public String getValue() {
+                        return arrivalTimestamp.toInstant().toString();
+                    }
+                });
 
                 // Ignoring records created before last init sync.
                 // NOTE1: This should happen only after init sync, during catchup.
