@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.streamsadapter.model.RecordAdapter;
 import com.amazonaws.services.kinesis.model.Record;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import com.trustpilot.connector.dynamodb.aws.AwsClients;
 import com.trustpilot.connector.dynamodb.aws.DynamoDBTableScanner;
 import com.trustpilot.connector.dynamodb.aws.TableScanner;
@@ -303,6 +304,9 @@ public class DynamoDBSourceTask extends SourceTask {
                         return arrivalTimestamp.toInstant().toString();
                     }
                 });
+
+                final JmxReporter reporter = JmxReporter.forRegistry(metrics).build();
+                reporter.start();
 
                 // Ignoring records created before last init sync.
                 // NOTE1: This should happen only after init sync, during catchup.
