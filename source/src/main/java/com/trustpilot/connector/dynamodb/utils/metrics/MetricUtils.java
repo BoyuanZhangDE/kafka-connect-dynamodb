@@ -4,21 +4,16 @@ import com.codahale.metrics.jmx.JmxReporter;
 import static com.codahale.metrics.MetricRegistry.name;
 
 public class MetricUtils {
-    public MetricUtils() {
-    };
-
-    public static final String NAME = "default";
-    private static final MetricRegistry REGISTRY = SharedMetricRegistries.getOrCreate(NAME);
+    private static String NAME = "default";
+    private final static MetricRegistry REGISTRY = SharedMetricRegistries.getOrCreate(NAME);
 
     static {
         final JmxReporter reporter = JmxReporter.forRegistry(REGISTRY).build();
         reporter.start();
     }
-
-    public static MetricRegistry get() {
+    public static MetricRegistry getRegistry() {
         return REGISTRY;
     }
-
     public static Gauge gauge(Class<?> kclass, String metricName, int metricsValue){
         return REGISTRY.register(name(kclass, metricName), new Gauge<Integer>() {
             @Override
@@ -27,21 +22,7 @@ public class MetricUtils {
             }
         });
     };
-
-
     public static Counter counter(Class<?> klass, String metricName) {
         return REGISTRY.counter(name(klass, metricName));
-    }
-
-    public static Counter counter(String metricName) {
-        return REGISTRY.counter(name(metricName));
-    }
-
-    public static Timer timer(Class<?> klass, String metricName) {
-        return REGISTRY.timer(name(klass, metricName));
-    }
-
-    public static Timer timer(String metricName) {
-        return REGISTRY.timer(name(metricName));
-    }
+    };
 }
