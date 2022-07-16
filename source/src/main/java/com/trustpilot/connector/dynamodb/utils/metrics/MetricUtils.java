@@ -4,8 +4,8 @@ import com.codahale.metrics.jmx.JmxReporter;
 import static com.codahale.metrics.MetricRegistry.name;
 
 public class MetricUtils {
-    private MetricUtils() {
-    }
+    public MetricUtils() {
+    };
 
     public static final String NAME = "default";
     private static final MetricRegistry REGISTRY = SharedMetricRegistries.getOrCreate(NAME);
@@ -19,9 +19,15 @@ public class MetricUtils {
         return REGISTRY;
     }
 
-    public static Gauge gauge(Class<?> klass, String metricName) {
-        return REGISTRY.gauge(name(klass, metricName));
-    }
+    public static Gauge gauge(Class<?> kclass, String metricName, int metricsValue){
+        return REGISTRY.register(name(kclass, metricName), new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                return metricsValue;
+            }
+        });
+    };
+
 
     public static Counter counter(Class<?> klass, String metricName) {
         return REGISTRY.counter(name(klass, metricName));

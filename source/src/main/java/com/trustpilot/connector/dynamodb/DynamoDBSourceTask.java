@@ -117,7 +117,8 @@ public class DynamoDBSourceTask extends SourceTask {
         DynamoDBSourceTaskConfig config = new DynamoDBSourceTaskConfig(configProperties);
         LOGGER.info("Starting task for table: {}", config.getTableName());
 
-        // JMX test
+        // JMX test 1
+        /*
         LOGGER.info("DEBUG_BZ: exporting test metrics");
         MetricRegistry metrics = new MetricRegistry();
         metrics.register(name(this.getClass(), "test_metrics_from_ddb"), new Gauge<Integer>() {
@@ -129,8 +130,14 @@ public class DynamoDBSourceTask extends SourceTask {
 
         final JmxReporter reporter = JmxReporter.forRegistry(metrics).build();
         reporter.start();
-
+        */
         // test end
+
+        MetricUtils metrics = new MetricUtils();
+        metrics.gauge(this.getClass(),"test_metrics_from_ddb", 123);
+
+
+
 
 
         LOGGER.debug("Getting DynamoDB description for table: {}", config.getTableName());
@@ -310,39 +317,6 @@ public class DynamoDBSourceTask extends SourceTask {
         for (Record record : dynamoDBRecords.getRecords()) {
             try {
                 Date arrivalTimestamp = record.getApproximateArrivalTimestamp();
-
-                // JMX test
-                LOGGER.info("DEBUG_BZ: exporting metrics arrivalTimeStamp: ", arrivalTimestamp.toInstant().toString());
-                MetricRegistry metrics = new MetricRegistry();
-                metrics.register(name(this.getClass(), "arrival_time_str"), new Gauge<String>() {
-                    @Override
-                    public String getValue() {
-                        return arrivalTimestamp.toInstant().toString();
-                    }
-                });
-
-                final JmxReporter reporter = JmxReporter.forRegistry(metrics).build();
-                reporter.start();
-
-                // Ignoring records created before last init sync.
-                // NOTE1: This should happen only after init sync, during catchup.
-                // After catchup newest record should still be within accepted safe interval or init sync will start again.
-                //
-                // NOTE2: KCL worker reads from multiple shards at the same time in a loop.
-                // Which means that there can be messages from various time instances (before and after init sync start instance).
-                if (isPreInitSyncRecord(arrivalTimestamp)) {
-                    LOGGER.debug(
-                            "Dropping old record to prevent another INIT_SYNC. ShardId: {} " +
-                                    "ApproximateArrivalTimestamp: {} CurrentTime: {}",
-                            dynamoDBRecords.getShardId(),
-                            arrivalTimestamp.toInstant(),
-                            Instant.now(clock));
-
-                    // We still need to mark those records as committed or KCL work won't be able to proceed
-                    RegisterAsProcessed(dynamoDBRecords.getShardId(), record.getSequenceNumber());
-                    continue;
-                }
-
                 // Received record which is behind "safe" zone. Indicating that "potentially" we lost some records.
                 // Need to resync...
                 // This happens if:
