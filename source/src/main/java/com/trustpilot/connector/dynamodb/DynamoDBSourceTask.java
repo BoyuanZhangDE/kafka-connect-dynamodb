@@ -7,9 +7,6 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.streamsadapter.model.RecordAdapter;
 import com.amazonaws.services.kinesis.model.Record;
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jmx.JmxReporter;
 import com.trustpilot.connector.dynamodb.aws.AwsClients;
 import com.trustpilot.connector.dynamodb.aws.DynamoDBTableScanner;
 import com.trustpilot.connector.dynamodb.aws.TableScanner;
@@ -25,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -33,7 +31,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import static com.codahale.metrics.MetricRegistry.name;
 /**
  * This source tasks tracks all DynamoDB table changes via DynamoDB Streams.
  * (Table must have Streams enabled with `new_image` mode)
@@ -117,7 +114,8 @@ public class DynamoDBSourceTask extends SourceTask {
         DynamoDBSourceTaskConfig config = new DynamoDBSourceTaskConfig(configProperties);
         LOGGER.info("Starting task for table: {}", config.getTableName());
 
-        MetricUtils.gauge(this.getClass(),"test_metrics_from_ddb", 123);
+        // send out metrics
+        MetricUtils.gauge(this.getClass(), "test_metrics_from_ddb", 222);
 
         LOGGER.debug("Getting DynamoDB description for table: {}", config.getTableName());
         if (client == null) {
@@ -292,10 +290,22 @@ public class DynamoDBSourceTask extends SourceTask {
         LOGGER.debug("Records({}) received from shard: {} for table: {}", dynamoDBRecords.getRecords().size(),
                      dynamoDBRecords.getShardId(),
                      tableDesc.getTableName());
+
+        LOGGER.info("BZ_DEBUG: Records({}) received from shard: {} for table: {}", dynamoDBRecords.getRecords().size(),
+                dynamoDBRecords.getShardId(),
+                tableDesc.getTableName());
+
         List<SourceRecord> result = new LinkedList<>();
         for (Record record : dynamoDBRecords.getRecords()) {
             try {
                 Date arrivalTimestamp = record.getApproximateArrivalTimestamp();
+
+                LOGGER.info("BZ_DEBUG: record received time is: {}", arrivalTimestamp);
+
+                Date nowTimestamp = Date.from(Instant.now());
+                long diff = nowTimestamp.getTime() - arrivalTimestamp.getTime();
+
+                MetricUtils.gauge(this.getClass(), "recordTravelTime", diff);
                 // Received record which is behind "safe" zone. Indicating that "potentially" we lost some records.
                 // Need to resync...
                 // This happens if:
