@@ -303,6 +303,8 @@ public class DynamoDBSourceTask extends SourceTask {
                 LOGGER.info("BZ_DEBUG: record received time is: {}", arrivalTimestamp);
 
                 Date nowTimestamp = Date.from(Instant.now());
+
+                LOGGER.info("BZ_DEBUG: nowTime is {}, arrivalTime is {}", nowTimestamp.getTime(), arrivalTimestamp.getTime());
                 long diff = nowTimestamp.getTime() - arrivalTimestamp.getTime();
 
                 MetricUtils.gauge(this.getClass(), "recordTravelTime", diff);
