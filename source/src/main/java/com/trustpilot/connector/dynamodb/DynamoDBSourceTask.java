@@ -114,9 +114,6 @@ public class DynamoDBSourceTask extends SourceTask {
         DynamoDBSourceTaskConfig config = new DynamoDBSourceTaskConfig(configProperties);
         LOGGER.info("Starting task for table: {}", config.getTableName());
 
-        // send out metrics
-        MetricUtils.gauge(this.getClass(), "test_metrics_from_ddb", 222);
-
         LOGGER.debug("Getting DynamoDB description for table: {}", config.getTableName());
         if (client == null) {
             client = AwsClients.buildDynamoDbClient(
@@ -308,7 +305,7 @@ public class DynamoDBSourceTask extends SourceTask {
                 long diff = nowTimestamp.getTime() - arrivalTimestamp.getTime();
 
 //                MetricUtils.gauge(this.getClass(), "recordTravelTime", diff);
-                MetricUtils.settableGauge(MetricRegistry.name("test1", "test1")).setValue(222);
+                MetricUtils.settableGauge(MetricRegistry.name("test1", "test1")).setValue(333);
                 // Received record which is behind "safe" zone. Indicating that "potentially" we lost some records.
                 // Need to resync...
                 // This happens if:
