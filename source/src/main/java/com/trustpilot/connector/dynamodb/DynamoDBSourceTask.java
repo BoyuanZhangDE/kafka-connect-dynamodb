@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.streamsadapter.model.RecordAdapter;
 import com.amazonaws.services.kinesis.model.Record;
+import com.codahale.metrics.MetricRegistry;
 import com.trustpilot.connector.dynamodb.aws.AwsClients;
 import com.trustpilot.connector.dynamodb.aws.DynamoDBTableScanner;
 import com.trustpilot.connector.dynamodb.aws.TableScanner;
@@ -22,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -308,6 +308,7 @@ public class DynamoDBSourceTask extends SourceTask {
                 long diff = nowTimestamp.getTime() - arrivalTimestamp.getTime();
 
                 MetricUtils.gauge(this.getClass(), "recordTravelTime", diff);
+                MetricUtils.settableGauge(MetricRegistry.name("test1", "test1")).setValue(222);
                 // Received record which is behind "safe" zone. Indicating that "potentially" we lost some records.
                 // Need to resync...
                 // This happens if:

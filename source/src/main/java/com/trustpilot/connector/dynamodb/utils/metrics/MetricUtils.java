@@ -29,4 +29,8 @@ public class MetricUtils {
             }
         });
     }
+
+    public static DefaultSettableGauge settableGauge(String metricName) {
+        return REGISTRY.gauge(MetricRegistry.name(metricName));
+    }
 }
