@@ -307,7 +307,7 @@ public class DynamoDBSourceTask extends SourceTask {
                 LOGGER.info("BZ_DEBUG: nowTime is {}, arrivalTime is {}", nowTimestamp.getTime(), arrivalTimestamp.getTime());
                 long diff = nowTimestamp.getTime() - arrivalTimestamp.getTime();
 
-                MetricUtils.gauge(this.getClass(), "recordTravelTime", diff);
+//                MetricUtils.gauge(this.getClass(), "recordTravelTime", diff);
                 MetricUtils.settableGauge(MetricRegistry.name("test1", "test1")).setValue(222);
                 // Received record which is behind "safe" zone. Indicating that "potentially" we lost some records.
                 // Need to resync...
